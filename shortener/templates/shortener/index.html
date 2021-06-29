@@ -1,0 +1,48 @@
+{% extends 'shortener/layout.html' %}
+{% load static %}
+
+{% block head %}
+    <link rel='stylesheet' href="{% static 'shortener/css/style-index.css' %}">
+{% endblock %}
+
+{% block content %}
+    <div id='index-banner'>
+        <div id="banner-textbox">
+            <h5><span>Shortener50</span> <br /> Free & Simple url shortener</h5>
+            <p>
+                Shortener50 is free and easy to use url shortener.
+                You can sign up easily to start creating, managing
+                and generating QR code of each created short url!
+            </p>
+        </div>
+        <img src='{% static "shortener/img/link.svg" %}' alt='link' />
+    </div>
+
+    <div id='cards'>
+        <div class="feature-card">
+            <img src="{% static 'shortener/img/easy.png' %}" class="card-img-top" alt="easy">
+            <div>
+                <h5>Easy to use</h5>
+                <p>Shortener50 provides simple & comfortable interface for shortening and managing links!</p>
+            </div>
+        </div>
+
+        <div class="feature-card">
+            <img src="{% static 'shortener/img/qrcodehand.png' %}" class="card-img-top" alt="qrcode">
+            <div>
+                <h5>QR code feature</h5>
+                <p>Generate QR code of created short url and scan it from anywhere, comfortably!</p>
+            </div>
+        </div>
+
+        <div class="feature-card">
+            <img src="{% static 'shortener/img/money.png' %}" class="card-img-top" alt="user">
+            <div>
+                <h5>Free to register</h5>
+                <p>You can easily create an account and start creating short urls for free!</p>
+                <a href="{% url 'register' %}" class="btn btn-outline-success btn-sm">Register now!</a>
+            </div>
+        </div>
+    </div>
+
+{% endblock %}

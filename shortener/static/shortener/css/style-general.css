@@ -1,0 +1,98 @@
+@import url('https://fonts.googleapis.com/css2?family=Roboto&display=swap');
+
+
+body {
+  font-family: 'Roboto', sans-serif;
+  color: rgb(106, 106, 106);
+  height: 100vh;
+  width: 100%;
+}
+
+* {
+  box-sizing: border-box;
+}
+
+#page-container {
+    display: grid;
+    grid-template-rows: auto max-content;
+    height: 100%;
+  }
+  
+#content-wrap {
+  grid-row: 1;
+}
+
+#main {
+  width: 100%;
+}
+
+.navbar {
+  background-color: #2e8b6c !important;
+}
+
+.navbar * {
+    color: white !important;
+
+}
+
+#footer {
+  background-color: #2e8b6c;
+  word-break: break-all;
+  color: white;
+  width: 100%;
+  grid-row: 2;
+}
+
+a,
+a:hover,
+a:focus {
+  text-decoration: none;
+}
+
+a {
+  color: #38b088;
+}
+
+a:hover,
+a:focus {
+  color: #2e8b6c;
+  transition: .5s;
+}
+
+#navbar-title {
+  margin-left: 1em;
+  margin-right: 1em;
+}
+
+.login-register .form-control:focus,
+#cards > div,
+#index-banner,
+#footer,
+.navbar,
+#statistics,
+#searchbox:focus {
+  box-shadow: 0 0 10px rgba(85, 135, 76, 0.8);
+}
+
+/* scrollbar */
+/* width */
+::-webkit-scrollbar {
+  width: 12px;
+}
+
+/* Track */
+::-webkit-scrollbar-track {
+  background: #ffffff;
+  border-radius: 50px;
+}
+
+/* Handle */
+::-webkit-scrollbar-thumb {
+  background: #38b088;
+  border-radius: 10px;
+}
+
+/* Handle on hover */
+::-webkit-scrollbar-thumb:hover {
+  background: #2e8b6c;
+}

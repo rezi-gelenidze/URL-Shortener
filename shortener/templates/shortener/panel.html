@@ -1,0 +1,199 @@
+{% extends 'shortener/layout.html' %}
+{% load static %}
+
+{% block head %}
+    <script src="https://cdn.jsdelivr.net/npm/chart.js"></script>
+    <link rel='stylesheet' href="{% static 'shortener/css/style-panel.css' %}">
+{% endblock %}
+
+{% block bodybottom %}
+    <script src="{% static 'shortener/js/panel.js' %}"></script>
+    <script src='{% static "shortener/js/qrcode.js" %}'></script>
+{% endblock %}
+
+{% block content %}
+    <!-- notification -->
+    <div class="notify">
+        <span id="notify-bar"></span>
+    </div>
+    <div class="collapse" id="collapseExample">
+        <div id='statistics'>
+            <div id='texts'>
+                <h3>statistics <i class="fas fa-chart-bar"></i></i></h3>
+                <p><i class="fas fa-link"></i> Links: <span id='created-count'></span>/500</p>
+                <p><i class="fas fa-toggle-on"></i> Active links: <span id='active-count'></span></p>
+                <p><i class="fas fa-mouse-pointer"></i> Total clicks: <span id='tot-click-count'></span></p>
+            </div>
+            <div id='toplinks'>
+                <canvas id="myChart" width="200" height="200"></canvas>
+            </div>
+        </div>
+    </div>
+
+    <div id='panelmenu' class="animate">
+        <button id='statistics-toggler' type="button" data-bs-toggle="collapse" data-bs-target="#collapseExample" aria-expanded="true" aria-controls="collapseExample">
+            <i class="fas fa-eye"></i> statistics
+        </button>
+
+        <div id='linklist'>
+            <div id='linklist-head'>
+                <div>
+                    <button class='btn btn-light btn-outline-success btn-sm me-2 responsive-toggler'><i class="fas fa-times"></i></button>
+                    <h5 class='text-center mt-1'>Your links</h5>
+                </div>
+                <button class='btn btn-sm btn-light btn-outline-success create-new'>New link <i class="fas fa-link"></i></button>
+            </div>
+
+            <div id='search'>
+                <input id='searchbox' class="form-control" type="text" placeholder="Search">
+
+                <button class="btn text-secondary" type="button" data-bs-toggle="collapse" data-bs-target="#searchsettings" aria-expanded="false" aria-controls="searchsettings">
+                    <i class="fas fa-sliders-h"></i>
+                </button>
+            </div>
+            <div class="collapse" id="searchsettings">
+                <form id='settingsForm'>
+                    <div class="form-check">
+                        <input class="form-check-input" type="radio" name="radio" id="radio1" value="title" checked>
+                        <label class="form-check-label" for="radio1">
+                            Search by title
+                        </label>
+                    </div>
+                    <div class="form-check">
+                        <input class="form-check-input" type="radio" name="radio" id="radio2" value="original">
+                        <label class="form-check-label" for="radio2">
+                            Search by original url
+                        </label>
+                    </div>
+                    <div class="form-check mb-3">
+                        <input class="form-check-input" type="radio" name="radio" id="radio3" value="short">
+                        <label class="form-check-label" for="radio3">
+                            Search by short ID
+                        </label>
+                    </div>
+                </form>
+            </div>
+
+            <div id='list'>
+
+
+                <template id='linklist-item'>
+                    <div class="card">
+                        <div class="card-body">
+                            <p class="card-title"><span id='listitem-title'></span> <span class='class='small text-muted'>(<span id='listitem-id' ></span>)</span></p>
+                            <p class="card-text small" id='listitem-original'></p>
+                            <p class="card-text"><small><span id='listitem-active'></span> <i class="text-success fas fa-circle"></i></small></p>
+                        </div>
+                    </div>
+                </template>
+            </div>
+        </div>
+        <!-- hidden popup window -->
+        <div class='popup-window animate'>
+            <div class='popup-content'>
+                <span class="close"><i class="fas fa-times"></i></span>
+            </div>
+        </div>
+
+        <!-- qr code popup content -->
+        <template id='pop-qr-markup'>
+            <div id='maincontent'>
+                <h5 class='text-center mt-4 p-4'></h5>
+                <div class='m-2 mb-4' id='qrcode'></div>
+                <a class='link mb-5'></a>
+            </div>
+        </template>
+        <!-- edit popup content -->
+        <template id='pop-edit-markup'>
+            <div id='maincontent'>
+                <h5 class='text-center mt-4 p-4'></h5>
+                <form class='manage-form mb-5' id='manage-edit-form'>
+                    {% csrf_token %}
+                    <div class="mb-3">
+                      <label for="edit-title" class="form-label">Link title</label>
+                      <input type="text" name='title' class="form-control" id="edit-title" maxlength="40" required>
+                    </div>
+                    <div class="mb-3">
+                      <label for="edit-original" class="form-label">Original link</label>
+                      <input type="url" name='original' class="form-control" id="edit-original" placeholder="https://www.example.com">
+                    </div>
+                    <button type="submit" class="btn btn-light btn-outline-success">Save</button>
+                </form>
+            </div>
+        </template> 
+        <!-- remove popup content -->
+        <template id='pop-remove-markup'>
+            <div id='maincontent'>
+                
+                <h5 class='text-center mt-4 p-4'></h5>
+                <form class='manage-form mb-5' id='manage-remove-form'>
+                    {% csrf_token %}
+                    <div class="mb-3">
+                      <p id='warning-text'></p>
+                      <ul class='info' id='remove-datalist'>
+                        <li>Original link - <span></span></li>
+                        <li>Short link - <span></span></li>
+                        <li>Total clicks - <span></span></li>
+                      </ul>                  
+                    </div>
+                    <div class='d-flex justify-content-center'>
+                        <button id='cancel-remove' class="form-cancel btn btn-light btn-outline-secondary m-1">Cancel</button>
+                        <button type="submit" class="btn btn-light btn-outline-danger m-1">Remove</button>
+                    </div>
+                </form>
+            </div>
+        </template>
+        <template id='pop-create-markup'>
+            <div id='maincontent'>
+                <h5 class='text-center mt-4 p-4'>Create new short URL</h5>
+                <form class='manage-form mb-5' id='manage-create-form'>
+                    {% csrf_token %}
+                    <div class="mb-3">
+                        <label for="create-title" class="form-label">Link title</label>
+                        <input type="text" name='title' class="form-control" id="create-title" maxlength="40" required>
+                    </div>
+                    <div class="mb-3">
+                        <label for="create-original" class="form-label">Original link</label>
+                        <input type="url" name='original' class="form-control" id="create-original" placeholder="https://www.example.com" required>
+                    </div>
+                    <div class='d-flex justify-content-center'>
+                        <button id='cancel-new' class="form-cancel` btn btn-light btn-outline-secondary m-1">Cancel</button>
+                        <button type="submit" class="btn btn-light btn-outline-success m-1">Create</button>
+                    </div>
+                </form>
+            </div>        
+        </template>
+        <div id='linkmanage'>
+            <div id='titlebar'>
+                <div class="d-flex align-items-center">
+                    <button class='btn btn-light btn-outline-success btn-sm me-2 responsive-toggler'><i class="fas fa-bars"></i></button>
+                    <h4 id='managed-title' class="mt-2"></h4>
+                </div>
+
+                <div class='d-flex align-items-center'>
+                    <p id='switch-text' class='pe-2 mt-3'>Active</p>
+                    <label class="switch">
+                        {% csrf_token %}
+                        <input id='switch-inp' type="checkbox">
+                        <span class="slider round"></span>
+                    </label>
+                </div>
+            </div>
+            
+            <ul class='info'>
+                <li>Original link - <span id='managed-original'></span></li>
+                <li>Short link - <span id='managed-short'></span></li>
+                <li>Total clicks - <span id='managed-clicks'></span></li>
+                <li class='mt-5 small text-muted'>Date created: <span id='managed-date'></span></li>
+            </ul>
+
+            <div class='buttons'>
+                <button id='manage-copy' class='btn btn-outline-success mt-1'>Copy <i class="fas fa-copy"></i></button>
+                <button id='manage-redirect' class='btn btn-outline-success mt-1'>Redirect <i class="fas fa-external-link-alt"></i></button>
+                <button id='manage-qr' class='btn btn-outline-success mt-1'>QR code <i class="fas fa-qrcode"></i></button>
+                <button id='manage-edit' class='btn btn-outline-success mt-1'>Edit <i class="fas fa-edit"></i></button>
+                <button id='manage-remove' class='btn btn-outline-danger mt-1'>Delete <i class="fas fa-trash"></i></button>
+            </div>
+        </div>
+    </div>
+{% endblock %}

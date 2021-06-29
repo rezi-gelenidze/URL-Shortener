@@ -1,0 +1,29 @@
+{% extends "shortener/layout.html" %}
+{% load static %}
+
+{% block head %}
+    <link rel='stylesheet' href="{% static 'shortener/css/style-auth.css' %}">
+{% endblock %}
+
+{% block content %}
+
+<div class="container">
+    {% csrf_token %}
+    <h3 class='form-page-texts'>Login</h3>
+
+    <form class='login-register' action="{% url 'login' %}" method="post">
+        {% if message %}
+        <div class='mr-auto ml-auto mb-3 text-center w-100 alert alert-danger small p-2'>{{ message }}</div>
+        {% endif %}
+        {% csrf_token %}
+        <div class="form-group">
+            <input autofocus class="form-control" type="text" name="username" placeholder="Username" required>
+        </div>
+        <div class="form-group">
+            <input class="form-control" type="password" name="password" placeholder="Password" required>
+        </div>
+        <input class="btn btn-outline-success mt-4" type="submit" value="Login">
+    </form>
+    <p class="form-page-texts">Don't have an account? <a href="{% url 'register' %}">Register here.</a></p>
+
+{% endblock %}

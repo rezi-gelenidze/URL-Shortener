@@ -1,0 +1,31 @@
+/* login and register pages */
+.login-register {
+    margin: 10px auto 0px auto;
+    width: 300px;
+    display: flex;
+    flex-direction: column;
+    align-items: center;
+  }
+  
+  .login-register input {
+    margin: .3em;
+    width: 300px;
+  }
+  
+  .login-register > input[type='submit'] {
+    width: 100px;
+  }
+  
+  .form-page-texts {
+    text-align: center;
+    padding: 20px;
+    margin-top: 20px;
+  }
+  
+  .login-register .form-control {
+    border-color: #2e8b6c;
+  }
+  
+  .login-register .form-control:focus {
+    outline: 0 none;
+  }
